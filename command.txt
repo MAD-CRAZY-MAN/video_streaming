@@ -1,0 +1,5 @@
+build 
+gcc -g -o ./main ./src/stream.c -I"~/ffmpeg_build/include" $(pkg-config --libs libavformat libavcodec libavutil libswscale libavresample libavdevice)
+
+rtp client 
+vlc rtp_client.sdp
