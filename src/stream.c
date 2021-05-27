@@ -1,29 +1,29 @@
 #include "stream.h"
+int width = 800;
+int height = 600;
+int fps = 30;
 
 int main(int argc, char *argv[])
 {
-  if (argc != 7)
+  if (argc != 4)
   {
-    fprintf(stderr, "Usage: %s [device] [output_path] [output_format] [width] [height] [fps]\n", argv[0]);
+    fprintf(stderr, "Usage: %s [device] [output_path] [output_format]\n", argv[0]);
     return 1;
   }
 
   const char *device = argv[1];
-  const char *output_path = argv[2];
+  const char *mpeg_path = argv[2];
   const char *output_format = argv[3];
-  int width = atoi(argv[4]);
-  int height = atoi(argv[5]);
-  int fps = atoi(argv[6]);
 
   end_stream = false;
   signal(SIGINT, handle_signal);
 
-  stream_video(device, output_path, output_format, width, height, fps);
+  stream_video(device, mpeg_path, output_format);
 
   return 0;
 }
 
-void stream_video(const char *device_index, const char *output_path, const char *output_format, int width, int height, int fps)
+void stream_video(const char *device_index, const char *output_path, const char *output_format)
 {
 #if LIBAVCODEC_VERSION_INT < AV_VERSION_INT(58, 9, 100)
   av_register_all();
@@ -31,7 +31,7 @@ void stream_video(const char *device_index, const char *output_path, const char 
   avdevice_register_all();
   avformat_network_init();
 
-  const char *device_family = get_device_family();
+  const char *device_family = "v4l2";
 
   stream_ctx_t *stream_ctx = malloc(sizeof(stream_ctx_t));
   stream_ctx->output_path = malloc(strlen(output_path) + 1);
@@ -43,12 +43,13 @@ void stream_video(const char *device_index, const char *output_path, const char 
   stream_ctx->out_stream = NULL;
   stream_ctx->out_codec_ctx = NULL;
 
-  memcpy(stream_ctx->output_path, output_path, strlen(output_path));
+  memcpy(stream_ctx->output_path, output_path, strlen(output_path)); //rtp://127.0.0.1:5004
   stream_ctx->output_path[strlen(output_path)] = '\0';
-  memcpy(stream_ctx->output_format, output_format, strlen(output_format));
+
+  memcpy(stream_ctx->output_format, output_format, strlen(output_format)); //rtp
   stream_ctx->output_format[strlen(output_format)] = '\0';
 
-  if (init_device_and_input_context(stream_ctx, device_family, device_index, width, height, fps) != 0)
+  if (init_device_and_input_context(stream_ctx, device_family, device_index) != 0)
   {
     return;
   }
@@ -60,7 +61,7 @@ void stream_video(const char *device_index, const char *output_path, const char 
   stream_ctx->out_stream = avformat_new_stream(stream_ctx->ofmt_ctx, stream_ctx->out_codec);
   stream_ctx->out_codec_ctx = avcodec_alloc_context3(stream_ctx->out_codec);
 
-  set_codec_params(stream_ctx, width, height, fps);
+  set_codec_params(stream_ctx);
   init_codec_stream(stream_ctx);
 
   stream_ctx->out_stream->codecpar->extradata = stream_ctx->out_codec_ctx->extradata;
@@ -142,7 +143,7 @@ void stream_video(const char *device_index, const char *output_path, const char 
   fprintf(stderr, "done.\n");
 }
 
-int init_device_and_input_context(stream_ctx_t *stream_ctx, const char *device_family, const char *device_index, int width, int height, int fps)
+int init_device_and_input_context(stream_ctx_t *stream_ctx, const char *device_family, const char *device_index)
 {
   char fps_str[5], width_str[5], height_str[5];
   sprintf(fps_str, "%d", fps);
@@ -213,7 +214,7 @@ int init_io_context(stream_ctx_t *stream_ctx, const char *output_path)
   return 0;
 }
 
-void set_codec_params(stream_ctx_t *stream_ctx, int width, int height, int fps)
+void set_codec_params(stream_ctx_t *stream_ctx)
 {
   const AVRational dst_fps = {fps, 1};
 
@@ -255,7 +256,7 @@ int init_codec_stream(stream_ctx_t *stream_ctx)
   return 0;
 }
 
-struct SwsContext *initialize_sample_scaler(AVCodecContext *codec_ctx, int width, int height)
+struct SwsContext *initialize_sample_scaler(AVCodecContext *codec_ctx)
 {
   struct SwsContext *swsctx = sws_getContext(width, height, AV_PIX_FMT_BGR24, width, height, codec_ctx->pix_fmt, SWS_BICUBIC, NULL, NULL, NULL);
   if (!swsctx)
@@ -276,18 +277,6 @@ char *concat_str(const char *s1, const char *s2)
   return result;
 }
 
-const char *get_device_family()
-{
-#ifdef _WIN32
-  const char *device_family = "dshow";
-#elif __APPLE__
-  const char *device_family = "avfoundation";
-#elif __linux__
-  const char *device_family = "v4l2";
-#endif
-
-  return device_family;
-}
 
 void handle_signal(int signal)
 {
