@@ -1,11 +1,11 @@
 build 
-gcc -g -o ./main ./src/stream.c -I"~/ffmpeg_build/include" $(pkg-config --libs libavformat libavcodec libavutil libswscale libavresample libavdevice)
+gcc -g -o ./main ./src/main.c -I"~/ffmpeg_build/include" $(pkg-config --libs libavformat libavcodec libavutil libswscale libavresample libavdevice)
 
 save mpeg2 ts container
-./main /dev/video0 ./stream.ts mpegts 800 600 24
+./main /dev/video0 ./stream.ts
 
 rtp server
-./main /dev/video0 rtp://127.0.0.1:5004 rtp 800 600 24
+./main /dev/video0 rtp://127.0.0.1:5004
 
 rtp client 
 vlc rtp_client.sdp

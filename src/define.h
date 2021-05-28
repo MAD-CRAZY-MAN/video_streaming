@@ -1,3 +1,6 @@
+#ifndef DEFINE_H
+#define DEFINE_H
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -13,22 +16,19 @@
 
 typedef struct _FileContext
 {
-  AVInputFormat *fmt;
   AVFormatContext *fmt_ctx;
-  AVCodec *codec;
+  AVInputFormat *fmt;
+  
   AVStream *stream;
+
   AVCodecContext *codec_ctx;
+  AVCodec *codec; 
 } FileContext;
 
 FileContext deviceInput, fileOutput, upload;
 
 bool end_stream;
 
-void stream_video();
-int open_device();
-
-
-void set_codec_params();
-int init_codec_stream();
-
 void handle_signal(int signal);
+
+#endif
