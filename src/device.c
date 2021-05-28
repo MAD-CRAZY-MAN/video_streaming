@@ -1,6 +1,6 @@
 #include "define.h"
 
-int open_device()
+int open_device(const char* device_name)
 {
   deviceInput.fmt = av_find_input_format("v4l2");
 
@@ -10,7 +10,7 @@ int open_device()
   av_dict_set(&options, "pixel_format", "uyvy422", 0);
   av_dict_set(&options, "probesize", "7000000", 0);
 
-  if (avformat_open_input(&deviceInput.fmt_ctx, "/dev/video0", deviceInput.fmt, &options) != 0)
+  if (avformat_open_input(&deviceInput.fmt_ctx, device_name, deviceInput.fmt, &options) != 0)
   {
     fprintf(stderr, "cannot initialize input device!\n");
     return 1;

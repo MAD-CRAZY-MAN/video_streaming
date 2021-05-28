@@ -28,7 +28,8 @@ typedef struct _FileContext
 FileContext deviceInput, fileOutput, upload;
 
 bool end_stream;
-
+void initialize();
+void release();
 void handle_signal(int signal);
 
 #endif

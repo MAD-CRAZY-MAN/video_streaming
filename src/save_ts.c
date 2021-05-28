@@ -1,6 +1,6 @@
 #include "save_ts.h"
 
-int open_output()
+int open_output(const char* output_path)
 {
   if (avformat_alloc_output_context2(&fileOutput.fmt_ctx, NULL, "mpegts", NULL) != 0)
   {
@@ -8,7 +8,7 @@ int open_output()
     return 1;
   }
 
-  if (avio_open2(&fileOutput.fmt_ctx->pb, "./save.ts", AVIO_FLAG_WRITE, NULL, NULL) != 0)
+  if (avio_open2(&fileOutput.fmt_ctx->pb, output_path, AVIO_FLAG_WRITE, NULL, NULL) != 0)
   {
     fprintf(stderr, "could not open IO context!\n");
     return 1;
@@ -127,13 +127,5 @@ void write_video()
     av_packet_unref(pkt);
     av_init_packet(pkt);
   }
-
-  av_write_trailer(fileOutput.fmt_ctx);
   av_frame_free(&outframe);
-  avio_close(fileOutput.fmt_ctx->pb);
-  avformat_free_context(fileOutput.fmt_ctx);
-  avio_close(deviceInput.fmt_ctx->pb);
-  avformat_free_context(deviceInput.fmt_ctx);
-
-  fprintf(stderr, "done.\n");
 }
