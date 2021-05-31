@@ -1,13 +1,14 @@
 CC = gcc
 target = main
+library = -I"~/ffmpeg_build/include"
 LDFLAGS = $$(pkg-config --libs libavformat libavcodec libavutil libswscale libavresample libavdevice)
-$(target) : ./src/main.o ./src/device.o ./src/save_ts.o
-	$(CC) -g -o ./main ./src/main.o ./src/device.o ./src/save_ts.o -I"~/ffmpeg_build/include" $(LDFLAGS)
-./src/main.o : ./src/main.c
-	$(CC) -g -c -o ./src/main.o ./src/main.c -I"~/ffmpeg_build/include" $(LDFLAGS)
-./src/device.o : ./src/device.c
-	$(CC) -g -c -o ./src/device.o ./src/device.c -I"~/ffmpeg_build/include" $(LDFLAGS)
-./src/output.o : ./src/save_ts.o
-	$(CC) -g -c -o ./src/save_ts.o ./src/save_ts.c -I"~/ffmpeg_build/include" $(LDFLAGS)
+$(target) : ./Src/main.o ./Src/device.o ./Src/save_ts.o
+	$(CC) -g -o ./main ./Src/main.o ./Src/device.o ./Src/save_ts.o $(library) $(LDFLAGS)
+./Src/main.o : ./Src/main.c
+	$(CC) -g -c -o ./Src/main.o ./Src/main.c $(library) $(LDFLAGS)
+./Src/device.o : ./Src/device.c
+	$(CC) -g -c -o ./Src/device.o ./Src/device.c $(library) $(LDFLAGS)
+./Src/output.o : ./Src/save_ts.o
+	$(CC) -g -c -o ./Src/save_ts.o ./Src/save_ts.c $(library) $(LDFLAGS)
 clean :
-	rm $(target)
+	rm $(target) ./Src/main.o ./Src/device.o ./Src/save_ts.o

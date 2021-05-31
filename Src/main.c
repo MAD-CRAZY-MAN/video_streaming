@@ -1,6 +1,6 @@
-#include "define.h"
-#include "device.h"
-#include "save_ts.h"
+#include "../Inc/define.h"
+#include "../Inc/device.h"
+#include "../Inc/save_ts.h"
 
 int main(int argc, char *argv[])
 {

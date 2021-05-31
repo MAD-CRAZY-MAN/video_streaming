@@ -1,4 +1,4 @@
-#include "define.h"
+#include "../Inc/device.h"
 
 int open_device(const char* device_name)
 {
