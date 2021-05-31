@@ -11,4 +11,4 @@ $(target) : ./Src/main.o ./Src/device.o ./Src/save_ts.o
 ./Src/output.o : ./Src/save_ts.o
 	$(CC) -g -c -o ./Src/save_ts.o ./Src/save_ts.c $(library) $(LDFLAGS)
 clean :
-	rm $(target) ./Src/main.o ./Src/device.o ./Src/save_ts.o
+	rm $(target) ./Src/main.o ./Src/device.o ./Src/save_ts.o ./save_video/save.ts

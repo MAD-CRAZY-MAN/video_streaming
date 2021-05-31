@@ -85,7 +85,7 @@ void write_video()
   av_init_packet(pkt);
 
   long pts = 0;
-
+bool count = 0;
   while (av_read_frame(deviceInput.fmt_ctx, pkt) >= 0 && !end_stream)
   {
     frame = av_frame_alloc();
@@ -126,6 +126,11 @@ void write_video()
     av_interleaved_write_frame(fileOutput.fmt_ctx, pkt);
     av_packet_unref(pkt);
     av_init_packet(pkt);
+    if(count == 0)
+    {
+      count = 1;
+     // system("ffmpeg -re -i ./save_video/save.ts -c copy -f rtsp -rtsp_transport tcp rtsp://localhost:8888/live.sdp");
+    }
   }
   av_frame_free(&outframe);
 }

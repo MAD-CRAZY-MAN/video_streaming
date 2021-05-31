@@ -9,3 +9,10 @@ rtp server
 
 rtp client 
 vlc rtp_client.sdp
+
+
+rtsp client(tcp) listen mode
+ffplay -rtsp_flags listen rtsp://localhost:8888/live.sdp?tcp -x 1024 -y 720 
+
+rtsp server
+ffmpeg -re -i ./save_video/save.ts -c copy -f rtsp -rtsp_transport tcp rtsp://localhost:8888/live.sdp
