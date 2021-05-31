@@ -10,13 +10,13 @@ int main(int argc, char *argv[])
     return 1;
   }
   initialize();
-
+  
   //open device
   if (open_device(argv[1]) != 0) //argv[1] ex: /dev/video0
     return 0;
   
   ////open output video file(.ts, mpeg2-ts)
-  if (open_output(argv[2]) != 0) //argv[2] ex: ./save.ts
+  if (open_output(argv[2]) != 0) //argv[2] ex: ./save_video/save.ts
     return 0;
 
   //write video(./save.ts)
@@ -51,6 +51,7 @@ void initialize()
 #endif
   avdevice_register_all();
   avformat_network_init();
+  avfilter_register_all();
 
   end_stream = false;
   signal(SIGINT, handle_signal);

@@ -2,6 +2,7 @@
 
 int open_device(const char* device_name)
 {
+  deviceInput.fmt_ctx = avformat_alloc_context();
   deviceInput.fmt = av_find_input_format("v4l2");
 
   AVDictionary *options = NULL;
@@ -10,7 +11,7 @@ int open_device(const char* device_name)
   av_dict_set(&options, "pixel_format", "uyvy422", 0);
   av_dict_set(&options, "probesize", "7000000", 0);
 
-  if (avformat_open_input(&deviceInput.fmt_ctx, device_name, deviceInput.fmt, &options) != 0)
+  if (avformat_open_input(&deviceInput.fmt_ctx, device_name, deviceInput.fmt, &options) != 0) //입력 스트림을 열고 헤더를 읽는다. 코덱을 열리지 않음
   {
     fprintf(stderr, "cannot initialize input device!\n");
     return 1;

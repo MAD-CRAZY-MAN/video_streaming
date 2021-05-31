@@ -126,11 +126,6 @@ bool count = 0;
     av_interleaved_write_frame(fileOutput.fmt_ctx, pkt);
     av_packet_unref(pkt);
     av_init_packet(pkt);
-    if(count == 0)
-    {
-      count = 1;
-     // system("ffmpeg -re -i ./save_video/save.ts -c copy -f rtsp -rtsp_transport tcp rtsp://localhost:8888/live.sdp");
-    }
   }
   av_frame_free(&outframe);
 }

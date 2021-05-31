@@ -12,6 +12,10 @@
 #include <libavdevice/avdevice.h>
 #include <libswscale/swscale.h>
 #include <libavutil/imgutils.h>
+#include <libavfilter/buffersink.h>
+#include <libavfilter/avfilter.h>
+#include <libavfilter/avfiltergraph.h>
+#include <libavfilter/buffersrc.h>
 
 
 typedef struct _FileContext
@@ -25,7 +29,15 @@ typedef struct _FileContext
   AVCodec *codec; 
 } FileContext;
 
+typedef struct _FilterContext
+{
+  AVFilterGraph* filter_graph;
+  AVFilterContext* src_ctx;
+  AVFilterContext* sink_ctx;
+} FilterContext;
+
 FileContext deviceInput, fileOutput, upload;
+FilterContext vfilter_ctx;
 
 bool end_stream;
 void initialize();
