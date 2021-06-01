@@ -1,6 +1,7 @@
 #include "../Inc/define.h"
 #include "../Inc/device.h"
 #include "../Inc/save_ts.h"
+#include "../Inc/filter.h"
 
 int main(int argc, char *argv[])
 {
@@ -18,6 +19,9 @@ int main(int argc, char *argv[])
   ////open output video file(.ts, mpeg2-ts)
   if (open_output(argv[2]) != 0) //argv[2] ex: ./save_video/save.ts
     return 0;
+
+  //init text filter
+  init_filter();
 
   //write video(./save.ts)
   write_video();

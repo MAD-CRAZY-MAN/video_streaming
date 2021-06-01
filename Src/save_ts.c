@@ -85,7 +85,7 @@ void write_video()
   av_init_packet(pkt);
 
   long pts = 0;
-bool count = 0;
+
   while (av_read_frame(deviceInput.fmt_ctx, pkt) >= 0 && !end_stream)
   {
     frame = av_frame_alloc();
