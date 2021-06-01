@@ -73,6 +73,7 @@ void write_video()
   AVFrame *frame = av_frame_alloc();
   AVFrame *outframe = av_frame_alloc();
   AVPacket *pkt = av_packet_alloc();
+  AVFrame *filterFrame = av_frame_alloc();
 
   int nbytes = av_image_get_buffer_size(fileOutput.codec_ctx->pix_fmt, fileOutput.codec_ctx->width, fileOutput.codec_ctx->height, 32);
   uint8_t *video_outbuf = (uint8_t *)av_malloc(nbytes);
@@ -85,7 +86,7 @@ void write_video()
   av_init_packet(pkt);
 
   long pts = 0;
-
+  
   while (av_read_frame(deviceInput.fmt_ctx, pkt) >= 0 && !end_stream)
   {
     frame = av_frame_alloc();
@@ -103,12 +104,23 @@ void write_video()
 
     av_packet_unref(pkt);
     av_init_packet(pkt);
-
+  
     sws_scale(swsctx, (const uint8_t *const *)frame->data, frame->linesize, 0, deviceInput.codec_ctx->height, outframe->data, outframe->linesize);
+
     av_frame_free(&frame);
     outframe->pts = pts++;
 
-    if (avcodec_send_frame(fileOutput.codec_ctx, outframe) != 0)
+    if(av_buffersrc_add_frame(vfilter_ctx.src_ctx, outframe) < 0)
+    {
+      printf("Error filter context");
+    }
+    if(av_buffersink_get_frame(vfilter_ctx.sink_ctx, filterFrame)<0)
+    {
+      printf("errror");
+    }
+    
+
+    if (avcodec_send_frame(fileOutput.codec_ctx, filterFrame) != 0)
     {
       fprintf(stderr, "error sending frame to output codec context!\n");
       break;
@@ -128,4 +140,5 @@ void write_video()
     av_init_packet(pkt);
   }
   av_frame_free(&outframe);
+  av_frame_free(&filterFrame);
 }
