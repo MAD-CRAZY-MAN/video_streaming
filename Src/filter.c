@@ -2,8 +2,9 @@
 
 int init_filter()
 {
-    static int count = 0;
-    count++;
+    static int counta = 0;
+    counta++;
+    snprintf(text_filter_str, sizeof(text_filter_str), "drawtext=textfile=text.txt:x=100:y=100:reload=1:fontsize=40:fontcolor=black");
     AVFilterContext *text_filter;
     AVFilterInOut *inputs = avfilter_inout_alloc();
     AVFilterInOut *outputs = avfilter_inout_alloc();
@@ -13,8 +14,7 @@ int init_filter()
     vfilter_ctx.sink_ctx = NULL;
 
    // char* text_filter_str = "drawtext=text='Nohsihyun':x=100:y=100:fontsize=40:fontcolor=black";
-    char text_filter_str[512];
-    snprintf(text_filter_str, sizeof(text_filter_str), "drawtext=text=%d:x=100:y=100:fontsize=40:fontcolor=black", count);
+ 
     snprintf(args, sizeof(args), "time_base=%d/%d:video_size=%dx%d:pix_fmt=%d:pixel_aspect=%d/%d"
     , deviceInput.stream->time_base.num, deviceInput.stream->time_base.den
     , deviceInput.codec_ctx->width, deviceInput.codec_ctx->height

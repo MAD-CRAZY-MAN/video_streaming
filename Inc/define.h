@@ -35,7 +35,8 @@ typedef struct _FilterContext
   AVFilterContext* src_ctx;
   AVFilterContext* sink_ctx;
 } FilterContext;
-
+   char text_filter_str[512];
+    
 FileContext deviceInput, fileOutput, upload;
 FilterContext vfilter_ctx;
 
