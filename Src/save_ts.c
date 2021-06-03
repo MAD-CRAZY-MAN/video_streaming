@@ -59,11 +59,9 @@ int open_output(const char* output_path)
 
 void write_video()
 {
-  static int count = 0;
-  count++;
   fileOutput.stream->codecpar->extradata = fileOutput.codec_ctx->extradata;
   fileOutput.stream->codecpar->extradata_size = fileOutput.codec_ctx->extradata_size;
-  snprintf(text_filter_str, sizeof(text_filter_str), "drawtext=text=%d:x=100:y=100:fontsize=40:fontcolor=black", count);
+
   // av_dump_format(fileOutput.fmt_ctx, 0, output_path, 1);
 
   if (avformat_write_header(fileOutput.fmt_ctx, NULL) != 0)
